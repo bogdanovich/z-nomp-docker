@@ -1,0 +1,54 @@
+version: '3.3'
+services:
+  redis:
+    image: 'redis'
+    container_name: z-nomp-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - z-nomp-redis-data:/data
+    entrypoint: redis-server --appendonly yes
+    logging:
+      options:
+        max-size: "200m"
+        max-file: "10"
+  zcash_testnet_node:
+    env_file:
+      - env/zcash_testnet_node.env
+    image: bogdanovich/zcash-docker
+    container_name: z-nomp-zcash-testnet
+    expose:
+      - "8232"
+    ports:
+      - "8232:8232"
+    volumes:
+      - z-nomp-zcash-testnet-params:/zcash/.zcash-params
+      - z-nomp-zcash-testnet:/zcash/.zcash
+    logging:
+      options:
+        max-size: "200m"
+        max-file: "10"
+  znomp:
+    image: bogdanovich/z-nomp-docker
+    container_name: z-nomp
+    expose:
+      - "8080"
+      - "3032"
+    ports:
+      - "8080:8080"
+      - "3032:3032"
+    volumes:
+      - z-nomp-pool-configs:/znomp/pool_configs
+    depends_on:
+      - redis
+      - zcash_testnet_node
+    logging:
+      options:
+        max-size: "200m"
+        max-file: "10"
+
+volumes:
+  z-nomp-redis-data:
+  z-nomp-zcash-testnet-params:
+  z-nomp-zcash-testnet:
+  z-nomp-pool-configs:

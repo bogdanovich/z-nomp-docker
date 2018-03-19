@@ -3,8 +3,7 @@ FROM debian:jessie
 LABEL maintainer="Anton Bogdanovich <anton@bogdanovich.co>"
 
 ENV ZNOMP_USER=znomp \
-    ZNOMP_HOME=/znomp \
-    ZNOMP_PORT=8080
+    ZNOMP_HOME=/znomp
 
 ARG GOSU_VERSION=1.7
 
@@ -26,7 +25,8 @@ RUN useradd -d "$ZNOMP_HOME" -U "$ZNOMP_USER" \
     && cd z-nomp \
     && npm update && npm install 
 
-EXPOSE $ZNOMP_PORT
+VOLUME ["$ZNOMP_HOME/pool_configs"]
+EXPOSE 8080 3032
 
 WORKDIR z-nomp
 COPY config.json docker-entrypoint.sh ./
