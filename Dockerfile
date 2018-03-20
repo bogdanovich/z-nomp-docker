@@ -21,14 +21,15 @@ RUN useradd -d "$ZNOMP_HOME" -U "$ZNOMP_USER" \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
     && npm install n -g && n stable \
-    && git clone https://github.com/bogdanovich/z-nomp \
-    && cd z-nomp \
+    && cd "$ZNOMP_HOME" \
+    && git init . && git remote add origin https://github.com/bogdanovich/z-nomp \
+    && git pull origin master \
     && npm update && npm install 
 
 VOLUME ["$ZNOMP_HOME/pool_configs"]
 EXPOSE 8080 3032
 
-WORKDIR z-nomp
+WORKDIR "$ZNOMP_HOME"
 COPY config.json docker-entrypoint.sh ./
 COPY pool_configs ./pool_configs
 ENTRYPOINT ["./docker-entrypoint.sh"]
