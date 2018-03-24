@@ -46,6 +46,14 @@ services:
       options:
         max-size: "200m"
         max-file: "10"
+  zcash_mitm_proxy:
+    image: mitmproxy/mitmproxy
+    container_name: z-nomp-zcash-mitmproxy
+    expose:
+      - "18232"
+    ports:
+      - "127.0.0.1:18232:8232"
+    command: mitmdump -p 18232 --mode reverse:http://z-nomp-zcash-testnet:8232 -w /tmp/dump
 
 volumes:
   z-nomp-redis-data:
